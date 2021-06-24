@@ -5,7 +5,7 @@
 
 
 from searchtweets import load_credentials,gen_request_parameters,collect_results,result_stream,utils
-from secrets_ar import *
+# from secrets_ar import *
 import pandas as pd
 import glob
 import os
@@ -244,7 +244,7 @@ def getTokens(df,drop = False):
 
 
 
-def executeQueries(qs,prefix,startTime,search_args,period = '1 days',nResults = 100000,verbose = True):
+def executeQueries(qs,prefix,startTime,search_args,period = '1 days',nResults = 100000,verbose = True, results_per_call= 100):
     '''
     Main routine to execute requests against search API
     for each query string. Some logic required to make sure
@@ -270,7 +270,7 @@ def executeQueries(qs,prefix,startTime,search_args,period = '1 days',nResults = 
 
         endTime = startTime + pd.to_timedelta(period)
 
-        query = gen_request_parameters(q, results_per_call=500,tweet_fields='text,author_id,id,created_at',                                   start_time=startTime.isoformat()[0:10],end_time=endTime.isoformat()[0:10])
+        query = gen_request_parameters(q, results_per_call=results_per_call,tweet_fields='text,author_id,id,created_at',                                   start_time=startTime.isoformat()[0:10],end_time=endTime.isoformat()[0:10])
 
         results = collect_results(query,max_tweets=nResults,result_stream_args=search_args)
         # Grab first batch of tweets to see how close to backfilling we get
