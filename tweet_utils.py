@@ -323,7 +323,7 @@ def executeQueries(qs,prefix,startTime,search_args,period = '1 days',nResults = 
                     print('startTime',(startTime - startTimeOffset).isoformat()[0:19])
                     print('endTime',endTime.isoformat()[0:19])
 
-                query = gen_request_parameters(q, results_per_call=500,tweet_fields='text,author_id,id,created_at',                                   start_time=(startTime - startTimeOffset).isoformat()[0:10],                                               end_time=endTime.to_pydatetime().strftime("%Y-%m-%d %H:%M"))
+                query = gen_request_parameters(q, results_per_call=results_per_call,tweet_fields='text,author_id,id,created_at',                                   start_time=(startTime - startTimeOffset).isoformat()[0:10],                                               end_time=endTime.to_pydatetime().strftime("%Y-%m-%d %H:%M"))
 
                 results = collect_results(query,max_tweets=nResults,result_stream_args=search_args)
                 # Grab 1k tweets first to see how far it goes
