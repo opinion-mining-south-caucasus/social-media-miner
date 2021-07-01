@@ -3,7 +3,6 @@
 
 # In[1]:
 
-
 from searchtweets import load_credentials,gen_request_parameters,collect_results,result_stream,utils
 # from secrets_ar import *
 import pandas as pd
@@ -90,6 +89,31 @@ def removeNoisyTerms(df,noisyTerms = ['veteran','truce']):
         
     return df
 
+def splitQueriesSimple(keywords, max_query_lenght = 400, additional_query_parameters = ''):
+    '''
+    Simpler verstion to generate the query strings from list of a keywords
+    :param keywords: list[string] list of keywords
+    :param max_query_lenght: int the length of generated query strings, 
+        depending on account type it might be 400 or 1000 
+    :additional_query_parameters 
+
+    :return :list[string] of generated query strings
+    '''
+    queries = []
+    max_query_lenght = 400
+    query = f'"{keywords[0]}"'
+
+    for keyword in keywords[1:]:
+        tmp_query = '{} OR "{}"'.format(query, keyword)
+        if len(tmp_query + additional_query_parameters) > max_query_lenght:
+            queries.append(f'{tmp_query}  {additional_query_parameters}')
+            query = f'"{keyword}"'
+            continue
+        query = tmp_query
+
+    queries.append(f'{tmp_query}  {additional_query_parameters}')
+
+    return queries
 
 def splitQueries(declensionsDf,prefix,writeToFile = True):
     '''

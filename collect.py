@@ -12,18 +12,21 @@ import subprocess
 import pandas as pd
 import langid
 from declensions.declensions import get_declensions
+from tweet_utils import *
+from crowdtangle_utils import *
 
 
-
-def get_data_tw("keywords", startdate, enddate):
-    results = []
-    print(keywords, startdate, enddate)
-    return results
+def get_data_tw(keywords, startdate, enddate):
+    search_args = load_credentials(filename='/content/tw_keys.yaml', yaml_key="search_tweets_v2")
+    queries = generate_queries(keywords)
+    dfs = executeQueries(queries,'mm', startdate, search_args, period="5 days")
+    return dfs
 
 def get_data_fb(keywords, startdate, enddate):
     results = []
-    print(keywords, startdate, enddate)
-    return results
+    queries = split_to_queries(keywords)
+    df = get_query_results(queries, startdate, enddate)
+    return df
 
 def get_data_yt(keywords, startdate, enddate):
     results = []
@@ -76,17 +79,16 @@ def collect(**kwargs):
     for transliteration_alphabet in transliterations_in:
         # declensions_and_transliterations = [get_transliterations for ]
 
-    results = []
+    dfs = []
     for platform in platforms:
         print(f'collecting data from - {platform}...')
         keywords_ = [i for i in keywords if validate_keyword(i, platform, min_posts, max_posts)]
-        results += platform_functions[platform](keywords_, startdate, enddate)
+        dfs += platform_functions[platform](keywords_, startdate, enddate)
     
     for result in results:
         detect_language(result)
 
     pd.DataFrame(results, columns=["a", "b", "c"])
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Social Media Miner')
