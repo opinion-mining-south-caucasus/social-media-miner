@@ -28,7 +28,7 @@ def split_to_queries(searchTerms, max_length = 910):
 
     return queries    
 
-def get_query_results(queries, list_id = 1567015,date_from = '2021-01-01', date_to='2021-06-30')
+def get_query_results(queries, list_id = 1567015,date_from = '2021-01-01', date_to='2021-06-30'):
     results = []
     for query in tqdm(queries):
         params = dict(
