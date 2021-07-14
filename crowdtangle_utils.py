@@ -11,7 +11,7 @@ import pandas as pd
 import os
 print()
 
-TOKEN = os.environ['CT_TOKEN']
+# TOKEN = os.environ['CT_TOKEN']
 
 # terms = []
 # searchTerms = get_declancions(terms)
