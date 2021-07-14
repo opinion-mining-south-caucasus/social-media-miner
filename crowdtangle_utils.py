@@ -16,7 +16,7 @@ TOKEN = os.environ['CT_TOKEN']
 # terms = []
 # searchTerms = get_declancions(terms)
 
-def split_to_queries(searchTerms, max_length = 910)
+def split_to_queries(searchTerms, max_length = 910):
     queries = []
     query = ''
     for searchTerm in searchTerms:
