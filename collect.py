@@ -1,7 +1,6 @@
 # !pip install langid > /dev/null 2>&1
 # !git clone https://github.com/opinion-mining-for-peace/declensions.git > /dev/null 2>&1
 
-
 from glob import glob
 from tqdm.notebook import tqdm
 import datetime
@@ -12,6 +11,8 @@ import subprocess
 import pandas as pd
 import langid
 from declensions.declensions import get_declensions
+from transliterations.transliterate import get_transliteration
+
 from tweet_utils import *
 from crowdtangle_utils import *
 
@@ -67,18 +68,28 @@ def validate_keyword(keyword, platform, min_posts, max_posts):
     print() 
     return is_keyword_valid
 
+
 def collect(**kwargs):
     keywords, platforms, startdate, enddate, output_dir, min_posts, max_posts = kwargs["keywords"], kwargs["platforms"], kwargs["startdate"], kwargs["enddate"], kwargs["output_dir"], kwargs["min_posts"], kwargs["max_posts"]
     
-    keywords = [get_translitterations(get_declencions(keyword)) for keyword in keywords]
+    #detect keywod langs
+    keywords = [{'keyword': keyword, "lang": langid.classify(keyword)[0]} for keyword in keywords]
     
+    #Generate declencions 
     if use_declencions:
-        keywords = [get_declensions([i.strip()], langid.classify(i.strip())[0]) for i in keywords]
-        keywords = list(itertools.chain.from_iterable(keywords))
+        keywords_with_declencions = []
+        for keyword in keywords:
+            declencions_for_keyword = get_declensions([keyword_with_lang["keyword"]], keyword_with_lang["lang"])
+            declencions_for_keyword = [{"keyword": declencion_for_keyword, "lang": keyword_with_lang["lang"] } for declencion_for_keyword in declencions_for_keyword ]
+            keywords_with_declencions.append(declencions_for_keyword)
 
+        keywords = list(itertools.chain.from_iterable(keywords_with_declencions))
+    
+    #Generate transliterations 
     for transliteration_alphabet in transliterations_in:
-        # declensions_and_transliterations = [get_transliterations for ]
+        keywords = [get_transliteration(keyword["lang"], transliteration_alphabet, keyword["keyword"]) for keyword in keywords]
 
+    #Collect the data transliterations 
     dfs = []
     for platform in platforms:
         print(f'collecting data from - {platform}...')
@@ -101,7 +112,7 @@ if __name__ == '__main__':
     parser.add_argument(      '--max_posts',  type=int, help='Maximum number of posts per month per keword, default=3000', default=3000)
 
     parser.add_argument(      '--use_declencions',  type=bool, help='Avaliable for ar,az,ka, default=False', default=false)
-    parser.add_argument(      '--transliterations_in',  type=str, help='Comma separated list transliterations alphabets. Avaliable transliterations ru,en, default=[]', default=[])
+    parser.add_argument(      '--transliterations_in',  type=str, help='Comma separated list transliterations alphabets. Avaliable transliterations LAT,CYR, default=[]', default=[])
     
 
     args = parser.parse_args()
@@ -113,10 +124,14 @@ if __name__ == '__main__':
         "output_dir": args.output_dir,
         "min_posts": args.min_posts,
         "max_posts": args.max_posts,
+        "use_declencions": args.use_declencions
+        "transliterations_in": args.transliterations_in
     }
     
     for platform in kwargs.platforms:
-        if platform not in ["tw","yt","fb","tl","vk"]:
-            raise('')
+        assert platform in ["tw","yt","fb","tl","vk"]
+
+    for transliteration_in in kwargs.transliterations_in:
+        assert transliteration_in in ["LAT", "CYR"]
 
     collect(**kwargs)
