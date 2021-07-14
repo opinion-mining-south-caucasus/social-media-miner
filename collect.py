@@ -124,7 +124,7 @@ if __name__ == '__main__':
         "output_dir": args.output_dir,
         "min_posts": args.min_posts,
         "max_posts": args.max_posts,
-        "use_declencions": args.use_declencions
+        "use_declencions": args.use_declencions,
         "transliterations_in": args.transliterations_in
     }
     
