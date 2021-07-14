@@ -111,7 +111,7 @@ if __name__ == '__main__':
     parser.add_argument(      '--min_posts',  type=int, help='Minimum number of posts per month per keword. default=5', default=5)
     parser.add_argument(      '--max_posts',  type=int, help='Maximum number of posts per month per keword, default=3000', default=3000)
 
-    parser.add_argument(      '--use_declencions',  type=bool, help='Avaliable for ar,az,ka, default=False', default=false)
+    parser.add_argument(      '--use_declencions',  type=bool, help='Avaliable for ar,az,ka, default=False', default=False)
     parser.add_argument(      '--transliterations_in',  type=str, help='Comma separated list transliterations alphabets. Avaliable transliterations LAT,CYR, default=[]', default=[])
     
 
