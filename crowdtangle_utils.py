@@ -21,8 +21,8 @@ def split_to_queries(searchTerms, max_length = 910):
     query = ''
     for searchTerm in searchTerms:
         if len(query + searchTerm) > max_length:
-        queries.append(query.rstrip(','))
-        query = ''  
+            queries.append(query.rstrip(','))
+            query = ''  
         query += f'"{searchTerm}",'
     queries.append(query.rstrip(','))
 
