@@ -19,7 +19,7 @@ import itertools
 
 def get_data_tw(keywords, startdate, enddate):
     search_args = load_credentials(filename='/content/tw_keys.yaml', yaml_key="search_tweets_v2")
-    queries = generate_queries(keywords)
+    queries = splitQueriesSimple(keywords)
     dfs = executeQueries(queries,'mm', startdate, search_args, period="5 days")
     return dfs
 
@@ -73,31 +73,33 @@ def collect(**kwargs):
     keywords, platforms, startdate, enddate, output_dir, min_posts, max_posts, use_declencions, transliterations_in = kwargs["keywords"], kwargs["platforms"], kwargs["startdate"], kwargs["enddate"], kwargs["output_dir"], kwargs["min_posts"], kwargs["max_posts"], kwargs["use_declencions"], kwargs["transliterations_in"]
     
     #detect keywod langs
-    keywords = [{'keyword': keyword, "lang": langid.classify(keyword)[0]} for keyword in keywords]
+    keyword_dicts = [{'keyword': keyword, "lang": langid.classify(keyword)[0]} for keyword in keywords]
     
-    #Generate declencions 
+    #Generate declencions
     if use_declencions:
         keywords_with_declencions = []
-        for keyword in keywords:
-            declencions_for_keyword = get_declensions([keyword["keyword"]], keyword["lang"])
-            declencions_for_keyword = [{"keyword": declencion_for_keyword, "lang": keyword["lang"] } for declencion_for_keyword in declencions_for_keyword ]
+        for keyword_dict in keyword_dicts:
+            declencions_for_keyword = get_declensions([keyword_dict["keyword"]], keyword_dict["lang"])
+            declencions_for_keyword = [{"keyword": declencion_for_keyword, "lang": keyword_dict["lang"] } for declencion_for_keyword in declencions_for_keyword ]
             keywords_with_declencions.append(declencions_for_keyword)
 
-        keywords = list(itertools.chain.from_iterable(keywords_with_declencions))
+        keyword_dicts = list(itertools.chain.from_iterable(keywords_with_declencions))
     
     #Generate transliterations
     if len(transliterations_in) > 0:
         transliterated_keywords = []
         for transliteration_alphabet in transliterations_in:
-            for keyword in keywords:
+            for keyword_dict in keyword_dicts:
                 transliterated_keywords.append({
-                    "lang": keyword["lang"],
-                    "keyword": get_transliteration(keyword["lang"], transliteration_alphabet, keyword["keyword"])
+                    "lang": keyword_dict["lang"],
+                    "keyword": get_transliteration(keyword_dict["lang"], transliteration_alphabet, keyword_dict["keyword"])
                 })
 
-        keywords += transliterated_keywords
+        keyword_dicts += transliterated_keywords
     
-    print(keywords)
+
+    keywords = [keyword_dict["keyword"] for keyword_dict in keyword_dicts]
+    
     #Collect the data transliterations 
     dfs = []
     for platform in platforms:

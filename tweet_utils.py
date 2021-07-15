@@ -68,7 +68,6 @@ def makeSimpleQuery():
         
     return qs,prefix
 
-
 def removeNoisyTerms(df,noisyTerms = ['veteran','truce']):
     '''
     Removes a set of noisy terms from DataFrame with
@@ -100,8 +99,7 @@ def splitQueriesSimple(keywords, max_query_lenght = 400, additional_query_parame
     :return :list[string] of generated query strings
     '''
     queries = []
-    max_query_lenght = 400
-    query = f'"{keywords[0]}"'
+    query = keywords[0]
 
     for keyword in keywords[1:]:
         tmp_query = '{} OR "{}"'.format(query, keyword)
@@ -200,8 +198,6 @@ def splitQueries(declensionsDf,prefix,writeToFile = True):
         
     return qs
 
-
-
 def makeComplexQuery(denoise = False):
     '''
     Function to create a query for input into
@@ -265,8 +261,6 @@ def getTokens(df,drop = False):
         return tokenDf,df
     else:
         return pd.DataFrame(),df
-
-
 
 def executeQueries(qs,prefix,startTime,search_args,period = '1 days',nResults = 100000,verbose = True, results_per_call= 100):
     '''
@@ -391,7 +385,6 @@ def executeQueries(qs,prefix,startTime,search_args,period = '1 days',nResults = 
             print('No results...\n+++++++\n')
             dfs.append(pd.DataFrame())
     return dfs
-
 
 def countTerms(text,stopWords = None):
     '''
