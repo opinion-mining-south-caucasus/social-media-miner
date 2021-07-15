@@ -100,12 +100,15 @@ def collect(**kwargs):
 
     keywords = [keyword_dict["keyword"] for keyword_dict in keyword_dicts]
     
+    validate_keywords = False
+    if validate_keywords:
+        keywords = [i for i in keywords if validate_keyword(i, platform, min_posts, max_posts)]
+
     #Collect the data transliterations 
     dfs = []
     for platform in platforms:
         print(f'collecting data from - {platform}...')
-        keywords_ = [i for i in keywords if validate_keyword(i, platform, min_posts, max_posts)]
-        dfs += platform_functions[platform](keywords_, startdate, enddate)
+        dfs += platform_functions[platform](keywords, startdate, enddate)
     
     for result in results:
         detect_language(result)

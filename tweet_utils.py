@@ -288,7 +288,7 @@ def executeQueries(qs,prefix,startTime,search_args,period = '1 days',nResults = 
 
         endTime = startTime + pd.to_timedelta(period)
 
-        query = gen_request_parameters(q, results_per_call=results_per_call,tweet_fields='text,author_id,id,created_at',                                   start_time=startTime.isoformat()[0:10],end_time=endTime.isoformat()[0:10])
+        query = gen_request_parameters(q, False, results_per_call=results_per_call,tweet_fields='text,author_id,id,created_at',                                   start_time=startTime.isoformat()[0:10],end_time=endTime.isoformat()[0:10])
 
         results = collect_results(query,max_tweets=nResults,result_stream_args=search_args)
         # Grab first batch of tweets to see how close to backfilling we get
