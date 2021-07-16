@@ -30,7 +30,7 @@ def split_to_queries(searchTerms, max_length = 910):
 
 def get_query_results(queries, list_id = 1567015, date_from = '2021-01-01', date_to='2021-06-30'):
     results = []
-    TOKEN = os.getenv('D8RKFE1p1AQEu91he5OXI5WeAKbLQcic4TmUNFda')
+    TOKEN = os.getenv('CROWDTANGLE_TOKEN')
     for query in tqdm(queries):
         params = dict(
             token = TOKEN,
