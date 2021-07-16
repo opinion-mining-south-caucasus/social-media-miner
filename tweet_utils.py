@@ -450,4 +450,4 @@ def get_tweets_simple(queries, search_args):
         tweets += collect_results({"query": query , "max_results":100},
                             max_tweets=400,
                             result_stream_args=search_args)
-    return tweets 
+    return pd.DataFrame(itertools.chain.from_iterable(tweets))

@@ -26,8 +26,7 @@ def get_data_tw(keywords, startdate, enddate):
     return dfs
 
 def get_data_fb(keywords, startdate, enddate):
-    results = []
-    queries = split_to_queries(keywords)
+    queries = split_to_queries([i.strip() for i in keywords.split(',')])
     df = get_query_results(queries, startdate, enddate)
     return df
 
