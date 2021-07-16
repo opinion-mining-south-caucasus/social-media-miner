@@ -70,7 +70,6 @@ def validate_keyword(keyword, platform, min_posts, max_posts):
     print() 
     return is_keyword_valid
 
-
 def collect(**kwargs):
     keywords, platforms, startdate, enddate, output_dir, min_posts, max_posts, use_declencions, transliterations_in = kwargs["keywords"], kwargs["platforms"], kwargs["startdate"], kwargs["enddate"], kwargs["output_dir"], kwargs["min_posts"], kwargs["max_posts"], kwargs["use_declencions"], kwargs["transliterations_in"]
     
