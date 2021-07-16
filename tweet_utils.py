@@ -444,8 +444,10 @@ def queryToList(q):
     '''
     return q.split(' OR ')
 
-def get_tweets_simple(query, search_args):
-    tweets = collect_results({"query":"ორკები OR პრაიდი", "max_results":100},
-                         max_tweets=400,
-                         result_stream_args=search_args)
+def get_tweets_simple(queries, search_args):
+    tweets = []
+    for query in queries:
+        tweets += collect_results({"query": query , "max_results":100},
+                            max_tweets=400,
+                            result_stream_args=search_args)
     return tweets 

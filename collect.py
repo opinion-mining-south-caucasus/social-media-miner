@@ -20,7 +20,9 @@ import itertools
 def get_data_tw(keywords, startdate, enddate):
     search_args = load_credentials(filename='/content/tw_keys.yaml', yaml_key="search_tweets_v2")
     queries = splitQueriesSimple(keywords)
-    dfs = executeQueries(queries,'mm', startdate, search_args, period="5 days")
+    # dfs = get_tweets_simple(queries,'mm', startdate, search_args, period="5 days")
+    # dfs = get_tweets_simple(queries,'mm', startdate, search_args, period="5 days")
+    dfs = get_tweets_simple(queries, search_args)
     return dfs
 
 def get_data_fb(keywords, startdate, enddate):
