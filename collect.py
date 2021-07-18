@@ -12,6 +12,8 @@ import pandas as pd
 import langid
 from declensions.declensions import get_declensions
 from transliterations.transliterate import get_transliteration
+from IPython.display import HTML
+import base64
 
 from social_media_minner.tweet_utils import *
 from social_media_minner.crowdtangle_utils import *
