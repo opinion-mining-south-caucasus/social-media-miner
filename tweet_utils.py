@@ -13,6 +13,7 @@ import langid,re
 import collections
 import matplotlib.pyplot as plt
 from googletrans import Translator
+import itertools
 
 def parseOperators(df):
     
@@ -450,4 +451,8 @@ def get_tweets_simple(queries, search_args):
         tweets += collect_results({"query": query , "max_results":100},
                             max_tweets=400,
                             result_stream_args=search_args)
-    return pd.DataFrame(itertools.chain.from_iterable(tweets))
+    
+    df = pd.DataFrame(itertools.chain.from_iterable([i["data"] for i in tweets]))
+
+    print(df.shape)
+    return df

@@ -26,7 +26,7 @@ def get_data_tw(keywords, startdate, enddate):
     return dfs
 
 def get_data_fb(keywords, startdate, enddate):
-    queries = split_to_queries([i.strip() for i in keywords.split(',')])
+    queries = split_to_queries(keywords)
     df = get_query_results(queries, startdate, enddate)
     return df
 
@@ -120,8 +120,8 @@ if __name__ == '__main__':
     parser.add_argument('-k', '--keywords',   type=str, help='Comma separated list of keywords. eg: keyword1,keyword2,keyword3', required=True )
     parser.add_argument('-p', '--platforms',  type=str, help='Comma separated list of target platforms for data collection. Avaliable platforms tw,yt,fb,tl,vk', required=True)
     parser.add_argument('-o', '--output_dir', type=str, help='Directory for collected data to be stored. default=\'./\'', default='./')
-    parser.add_argument('-s', '--startdate',  type=datetime.date.fromisoformat, help='Please provide the date in ISO fromat YYYY-MM-DD', required=True)
-    parser.add_argument('-e', '--enddate',    type=datetime.date.fromisoformat, help='Please provide the date in ISO fromat YYYY-MM-DD', required=True)
+    parser.add_argument('-s', '--startdate',  type=datetime.date.fromisoformat, help='Please provide the date in ISO fromat YYYY-MM-DD')
+    parser.add_argument('-e', '--enddate',    type=datetime.date.fromisoformat, help='Please provide the date in ISO fromat YYYY-MM-DD')
     parser.add_argument(      '--min_posts',  type=int, help='Minimum number of posts per month per keword. default=5', default=5)
     parser.add_argument(      '--max_posts',  type=int, help='Maximum number of posts per month per keword, default=3000', default=3000)
 
