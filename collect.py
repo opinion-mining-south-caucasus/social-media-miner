@@ -12,7 +12,6 @@ import pandas as pd
 import langid
 from declensions.declensions import get_declensions
 from transliterations.transliterate import get_transliteration
-from datetime import datetime
 
 from social_media_minner.tweet_utils import *
 from social_media_minner.crowdtangle_utils import *
@@ -55,7 +54,7 @@ platform_functions = {
 }
 
 def create_download_link(df, title, filename):  
-    filename = f"{filename}-{datetime.now().strftime('%Y-%m-%d-%H-%M')}.csv"
+    filename = f"{filename}-{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}.csv"
     csv = df.to_csv()
     b64 = base64.b64encode(csv.encode())
     payload = b64.decode()
