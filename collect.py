@@ -124,7 +124,7 @@ def collect(**kwargs):
         print(f'collecting data from - {platform}...')
         dfs[platform] = platform_functions[platform](keywords, startdate, enddate)
         print(f'{dfs[platform].shape[0]} results from {platform}')
-        create_download_link(dfs[platform], f'Download the results from {platform}', f'{platform}-data')
+        dfs[platform].to_excel(f'data-from-{platform}.xlsx', index=None)
 
     # for result in results:
     #     detect_language(result)

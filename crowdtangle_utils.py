@@ -25,13 +25,13 @@ def split_to_queries(searchTerms, max_length = 910):
             query = ''  
         query += f'"{searchTerm}",'
     queries.append(query.rstrip(','))
-
     return queries
 
 def get_query_results(queries, list_id = 1567015, date_from = '2021-01-01', date_to='2021-06-30'):
     results = []
     TOKEN = os.getenv('CROWDTANGLE_TOKEN')
-    for query in tqdm(queries):
+    # for query in tqdm(queries):
+    for query in queries:
         params = dict(
             token = TOKEN,
             startDate = '2021-01-01',
