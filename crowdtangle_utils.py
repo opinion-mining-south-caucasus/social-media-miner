@@ -9,7 +9,7 @@ import time
 from tqdm.notebook import tqdm
 import pandas as pd
 import os
-print()
+# print()
 
 # TOKEN = os.environ['CT_TOKEN']
 
@@ -28,9 +28,12 @@ def split_to_queries(searchTerms, max_length = 910):
     return queries
 
 def get_query_results_fb(queries, date_from, date_to, list_id = 1567015):
+    if os.environ['VERBOSE'] == 'VERBOSE':
+        print('get_query_results_fb', queries, date_from, date_to, list_id)
+    
     results = []
     TOKEN = os.getenv('CROWDTANGLE_TOKEN')
-    
+    # return pd.DataFrame()
     for query in queries:
         res = {"result":{"pagination":{"nextPage":None}}}
         offset = 0
