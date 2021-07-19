@@ -448,7 +448,9 @@ def queryToList(q):
 def get_tweets_simple(queries, search_args):
     tweets = []
     for query in queries:
-        tweets += collect_results({"query": query , "max_results":100},
+        # "toDate":"201710300000","fromDate":"201709010000"
+        # query = gen_request_parameters(q, False, results_per_call=1000 ,tweet_fields='text,author_id,id,created_at', start_time=startTime.isoformat()[0:10],end_time=endTime.isoformat()[0:10])
+        tweets += collect_results({"query": query , "max_results":100, "tweet.fields": "text,author_id,id,created_at"},
                             max_tweets=400,
                             result_stream_args=search_args)
     

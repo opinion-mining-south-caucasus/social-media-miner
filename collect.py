@@ -124,6 +124,7 @@ def collect(**kwargs):
         keywords = [i for i in keywords if validate_keyword(i, platform, min_posts, max_posts)]
 
     #Collect the data transliterations 
+    
     dfs = {}
     for platform in platforms:
         print(f'collecting data from - {platform}...')
@@ -131,8 +132,16 @@ def collect(**kwargs):
         print(f'{dfs[platform].shape[0]} results from {platform}')
         dfs[platform].to_excel(f'data-from-{platform}.xlsx', index=None)
 
+    
     # for result in results:
     #     detect_language(result)
+
+    #add theam
+
+    #add categories/source type
+
+    # for result in results:
+    #     add_translation_col(result)
 
     # pd.DataFrame(results, columns=["a", "b", "c"])
 
