@@ -31,18 +31,25 @@ def get_data_fb(keywords, startdate, enddate):
     return df
 
 def get_data_yt(keywords, startdate, enddate):
+    queries = splitQueriesSimple(keywords)
+    
     TOKEN = os.getenv('YOUTUBE_TOKEN')
-    query = ' OR '.join([f'"{i}"' for i in keywords])
+    
+    results = []
+    for query in queries:
+        params = dict(
+            part = 'snippet',
+            q = query,
+            maxResults = 1000,
+            publishedAfter = f'{startdate}T00:00:00Z',
+            key = TOKEN
+        )
+        res = requests.get("https://youtube.googleapis.com/youtube/v3/search", params = params)
+        
+        res_dict = res.json()
+        results += [i["snippet"] for i in res["items"]]
 
-    params = dict(
-        part = 'snippet',
-        q = query,
-        maxResults = 1000,
-        publishedAfter = f'{startdate}T00:00:00Z',
-        key = TOKEN
-    )
-    res = requests.get("https://youtube.googleapis.com/youtube/v3/search", params = params).json()
-    df = pd.DataFrame([i["snippet"] for i in res["items"]])
+    df = pd.DataFrame(results)
 
     return df
 
