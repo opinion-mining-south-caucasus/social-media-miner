@@ -17,7 +17,7 @@ import itertools
 
 def get_data_tw(keywords, startdate, enddate):
     queries = splitQueriesSimple(keywords)
-    df = get_query_results_tw(queries)
+    df = get_query_results_tw(queries, startdate, enddate)
     return df
 
 def get_data_fb(keywords, startdate, enddate, list_id):
@@ -27,7 +27,7 @@ def get_data_fb(keywords, startdate, enddate, list_id):
 
 def get_data_yt(keywords, startdate, enddate):
     queries = splitQueriesSimple(keywords)
-    df = get_query_results_yt(queries)
+    df = get_query_results_yt(queries, startdate, enddate)
     return df
 
 def get_data_tl(keywords, startdate, enddate):

@@ -2,8 +2,10 @@ import os
 import pandas as pd
 import requests
 
-def get_query_results_yt(queries):
-    
+def get_query_results_yt(queries, startdate, enddate):
+    if os.environ['VERBOSE'] == 'VERBOSE':
+        print('get_query_results_tw', queries, startdate, enddate)
+
     TOKEN = os.getenv('YOUTUBE_TOKEN')
 
     results = []
@@ -14,8 +16,8 @@ def get_query_results_yt(queries):
                 part = 'snippet',
                 q = query,
                 maxResults = 50,
-                publishedAfter = f'{startdate}T00:00:00Z',
-                publishedBefore = f'{enddate}T00:00:00Z',
+                publishedAfter = f'{startdate.isoformat()[:10]}T00:00:00Z',
+                publishedBefore = f'{enddate.isoformat()[:10]}T00:00:00Z',
                 key = TOKEN,
                 order = 'viewCount',
             )

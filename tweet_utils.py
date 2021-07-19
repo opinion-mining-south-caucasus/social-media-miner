@@ -446,6 +446,10 @@ def queryToList(q):
     return q.split(' OR ')
 
 def get_query_results_tw(queries, startdate, enddate):
+    if os.environ['VERBOSE'] == 'VERBOSE':
+        print('get_query_results_tw', queries, startdate, enddate)
+        print(type(enddate))
+
     search_args = load_credentials(filename='/content/tw_keys.yaml', yaml_key="search_tweets_v2")
     
     tweets = []
@@ -454,8 +458,8 @@ def get_query_results_tw(queries, startdate, enddate):
                                         tweet_fields='attachments,author_id,context_annotations,conversation_id,created_at,entities,geo,id,in_reply_to_user_id,lang,possibly_sensitive,public_metrics,referenced_tweets,reply_settings,source,text,withheld',
                                         place_fields='contained_within,country,country_code,full_name,geo,id,name,place_type',
                                         user_fields='created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld',
-                                        start_time=startdate, 
-                                        end_time=enddate)
+                                        start_time=startdate.isoformat()[:10], 
+                                        end_time=enddate.isoformat()[:10])
         i = 0
         while True:
             i += 1
