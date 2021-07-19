@@ -113,6 +113,7 @@ def collect(**kwargs):
             print('error ocurred while collectiong data from ' + platform)
             dfs[platform] = pd.DataFrame()
         
+        dfs[platform]["platform"] = platform
         print(f'{dfs[platform].shape[0]} results from {platform}')
         dfs[platform].to_excel(f'data-from-{platform}.xlsx', index=None)
 

@@ -8,7 +8,7 @@ def get_query_results_yt(queries, startdate, enddate):
 
     TOKEN = os.getenv('YOUTUBE_TOKEN')
 
-    results = []
+    ids = []
     for query in queries:
         first_loop = True
         while True:
@@ -32,8 +32,39 @@ def get_query_results_yt(queries, startdate, enddate):
             res = requests.get("https://youtube.googleapis.com/youtube/v3/search", params = params)
 
             res_dict = res.json()
-            results += [i["snippet"] for i in res_dict["items"]]
+            ids += [i["id"]["videoId"] for i in res_dict["items"]]
+    
+    df = get_video_details(ids)
+
+    return df
+
+def get_video_details(ids):
+    results += [i["snippet"] for i in res_dict["items"]]
+    TOKEN = os.getenv('YOUTUBE_TOKEN')
+
+    for ids_chunck in ids:
+        params = dict(
+            part = 'contentDetails,id,liveStreamingDetails,localizations,recordingDetails,snippet,statistics,status,topicDetails',
+            id = ','.join(ids_chunck),
+            key = TOKEN,
+        )
+
+        res = requests.get("https://www.googleapis.com/youtube/v3/videos", params = params)
+        res_dict = res.json()
+        results += [i["snippet"] for i in res_dict["items"]]
     
     df = pd.DataFrame(results)
 
+    for i, row in df.iterrows():
+        for col in ['snippet', 'contentDetails', 'status', 'statistics', 'topicDetails']:
+            for key in row[col]:
+                print(f'{col}_{key}', type(row[col][key]))
+                if type(row[col][key]) == dict:
+                    continue
+                if type(row[col][key]) == list:
+                    df.at[i, f'{col}_{key}'] = ','.join(row[col][key])
+                    continue
+                df.at[i, f'{col}_{key}'] = row[col][key]
+    
     return df
+            
