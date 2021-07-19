@@ -47,7 +47,7 @@ def get_data_yt(keywords, startdate, enddate):
         res = requests.get("https://youtube.googleapis.com/youtube/v3/search", params = params)
         
         res_dict = res.json()
-        results += [i["snippet"] for i in res["items"]]
+        results += [i["snippet"] for i in res_dict["items"]]
 
     df = pd.DataFrame(results)
 
