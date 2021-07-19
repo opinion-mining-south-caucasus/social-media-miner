@@ -38,11 +38,19 @@ def get_query_results_yt(queries, startdate, enddate):
 
     return df
 
-def get_video_details(ids):
-    results += [i["snippet"] for i in res_dict["items"]]
-    TOKEN = os.getenv('YOUTUBE_TOKEN')
 
-    for ids_chunck in ids:
+def get_video_details(ids):
+    if os.environ['VERBOSE'] == 'VERBOSE':
+        print('get_video_details', ids)
+    results = []
+    
+    TOKEN = os.getenv('YOUTUBE_TOKEN')
+    ids_chuncks = [ids[i:i + 49] for i in range(0, len(ids), 49)]
+    
+    for ids_chunck in ids_chuncks:
+        if os.environ['VERBOSE'] == 'VERBOSE':
+            print('ids_chunck', ids_chunck)
+
         params = dict(
             part = 'contentDetails,id,liveStreamingDetails,localizations,recordingDetails,snippet,statistics,status,topicDetails',
             id = ','.join(ids_chunck),
@@ -51,20 +59,25 @@ def get_video_details(ids):
 
         res = requests.get("https://www.googleapis.com/youtube/v3/videos", params = params)
         res_dict = res.json()
-        results += [i["snippet"] for i in res_dict["items"]]
+        results += res.json()["items"]
     
     df = pd.DataFrame(results)
 
     for i, row in df.iterrows():
         for col in ['snippet', 'contentDetails', 'status', 'statistics', 'topicDetails']:
+            if col not in row: continue
+            
             for key in row[col]:
-                print(f'{col}_{key}', type(row[col][key]))
                 if type(row[col][key]) == dict:
                     continue
                 if type(row[col][key]) == list:
                     df.at[i, f'{col}_{key}'] = ','.join(row[col][key])
                     continue
-                df.at[i, f'{col}_{key}'] = row[col][key]
+                try:
+                    df.at[i, f'{col}_{key}'] = row[col][key]
+                except:
+                    if os.environ['VERBOSE'] == 'VERBOSE':
+                        print(f'cant set {col}_{key}', type(row[col][key]))
     
     return df
             
