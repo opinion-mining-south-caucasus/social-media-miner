@@ -27,20 +27,29 @@ def split_to_queries(searchTerms, max_length = 910):
     queries.append(query.rstrip(','))
     return queries
 
-def get_query_results(queries, list_id = 1567015, date_from = '2021-01-01', date_to='2021-06-30'):
+def get_query_results_fb(queries, date_from, date_to, list_id = 1567015):
     results = []
     TOKEN = os.getenv('CROWDTANGLE_TOKEN')
-    # for query in tqdm(queries):
+    
     for query in queries:
-        params = dict(
-            token = TOKEN,
-            startDate = '2021-01-01',
-            endDate = '2021-06-30',
-            count = 100,
-            listIds = 1567015,
-            searchTerm = query
-        )
-        res = requests.get("https://api.crowdtangle.com/posts", params = params).json()
-        results += res["result"]["posts"]
-        time.sleep(11)
+        res = {"result":{"pagination":{"nextPage":None}}}
+        offset = 0
+
+        while 'nextPage' in res["result"]["pagination"]:
+
+            params = dict(
+                token = TOKEN,
+                startDate = date_from,
+                endDate = date_to,
+                count = 100,
+                listIds = list_id,
+                searchTerm = query,
+                offset = 100 * offset
+            )
+            offset += 1
+            res = requests.get("https://api.crowdtangle.com/posts", params = params).json()
+
+            results += res["result"]["posts"]
+            time.sleep(11)
+    
     return pd.DataFrame(results)

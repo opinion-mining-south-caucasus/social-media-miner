@@ -445,16 +445,43 @@ def queryToList(q):
     '''
     return q.split(' OR ')
 
-def get_tweets_simple(queries, search_args):
+def get_query_results_tw(queries, startdate, enddate):
+    search_args = load_credentials(filename='/content/tw_keys.yaml', yaml_key="search_tweets_v2")
+    
     tweets = []
-    for query in queries:
-        # "toDate":"201710300000","fromDate":"201709010000"
-        # query = gen_request_parameters(q, False, results_per_call=1000 ,tweet_fields='text,author_id,id,created_at', start_time=startTime.isoformat()[0:10],end_time=endTime.isoformat()[0:10])
-        tweets += collect_results({"query": query , "max_results":100, "tweet.fields": "text,author_id,id,created_at"},
-                            max_tweets=400,
-                            result_stream_args=search_args)
+    for query_ in queries:
+        query = gen_request_parameters(query_, False, results_per_call=100 ,
+                                        tweet_fields='attachments,author_id,context_annotations,conversation_id,created_at,entities,geo,id,in_reply_to_user_id,lang,possibly_sensitive,public_metrics,referenced_tweets,reply_settings,source,text,withheld',
+                                        place_fields='contained_within,country,country_code,full_name,geo,id,name,place_type',
+                                        user_fields='created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld',
+                                        start_time=startdate, 
+                                        end_time=enddate)
+        i = 0
+        while True:
+            i += 1
+            if i > 50:
+                print('more that 50 pages have been collected for query :', query_)
+                break
+        
+            if len(tweets) > 0:
+                if "next_token" not in tweets[-1]["meta"]:
+                    break
+
+                k = json.loads(query)
+                k['next_token'] = tweets[-1]["meta"]["next_token"]
+                query = json.dumps(k)
+
+
+            tweets += collect_results(query,
+                                max_tweets=100,
+                                result_stream_args=search_args)
+            
+            tweets_ = tweets[-1]
+            print(tweets_["meta"], len(tweets_["data"]))
     
     df = pd.DataFrame(itertools.chain.from_iterable([i["data"] for i in tweets]))
-
-    print(df.shape)
+    df["like_count"] =  df.public_metrics.apply(lambda x: x["like_count"])
+    df["quote_count"] =  df.public_metrics.apply(lambda x: x["quote_count"])
+    df["reply_count"] =  df.public_metrics.apply(lambda x: x["reply_count"])
+    df["retweet_count"] =  df.public_metrics.apply(lambda x: x["retweet_count"])
     return df

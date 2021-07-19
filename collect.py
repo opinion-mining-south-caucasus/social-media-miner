@@ -1,6 +1,3 @@
-# !pip install langid > /dev/null 2>&1
-# !git clone https://github.com/opinion-mining-for-peace/declensions.git > /dev/null 2>&1
-
 from glob import glob
 from tqdm.notebook import tqdm
 import json
@@ -14,43 +11,23 @@ from transliterations.transliterate import get_transliteration
 import datetime
 
 from social_media_minner.tweet_utils import *
+from social_media_minner.yt_utils import *
 from social_media_minner.crowdtangle_utils import *
 import itertools
 
 def get_data_tw(keywords, startdate, enddate):
-    search_args = load_credentials(filename='/content/tw_keys.yaml', yaml_key="search_tweets_v2")
     queries = splitQueriesSimple(keywords)
-    # dfs = get_tweets_simple(queries,'mm', startdate, search_args, period="5 days")
-    # dfs = get_tweets_simple(queries,'mm', startdate, search_args, period="5 days")
-    dfs = get_tweets_simple(queries, search_args)
-    return dfs
+    df = get_query_results_tw(queries)
+    return df
 
-def get_data_fb(keywords, startdate, enddate):
+def get_data_fb(keywords, startdate, enddate, list_id):
     queries = split_to_queries(keywords)
-    df = get_query_results(queries, startdate, enddate)
+    df = get_query_results_fb(queries, startdate, enddate, list_id)
     return df
 
 def get_data_yt(keywords, startdate, enddate):
     queries = splitQueriesSimple(keywords)
-    
-    TOKEN = os.getenv('YOUTUBE_TOKEN')
-    
-    results = []
-    for query in queries:
-        params = dict(
-            part = 'snippet',
-            q = query,
-            maxResults = 1000,
-            publishedAfter = f'{startdate}T00:00:00Z',
-            key = TOKEN
-        )
-        res = requests.get("https://youtube.googleapis.com/youtube/v3/search", params = params)
-        
-        res_dict = res.json()
-        results += [i["snippet"] for i in res_dict["items"]]
-
-    df = pd.DataFrame(results)
-
+    df = get_query_results_yt(queries)
     return df
 
 def get_data_tl(keywords, startdate, enddate):
@@ -70,7 +47,6 @@ platform_functions = {
     'tl': get_data_tl,
     'vk': get_data_vk
 }
-
 
 def validate_keyword(keyword, platform, min_posts, max_posts):
     """
@@ -128,7 +104,15 @@ def collect(**kwargs):
     dfs = {}
     for platform in platforms:
         print(f'collecting data from - {platform}...')
-        dfs[platform] = platform_functions[platform](keywords, startdate, enddate)
+        try:
+            if platform == 'fb':
+                dfs[platform] = platform_functions[platform](keywords, startdate, enddate, kwargs["list_id"])
+            else:
+                dfs[platform] = platform_functions[platform](keywords, startdate, enddate)
+        except:
+            print('error ocurred while collectiong data from ' + platform)
+            dfs[platform] = pd.DataFrame()
+        
         print(f'{dfs[platform].shape[0]} results from {platform}')
         dfs[platform].to_excel(f'data-from-{platform}.xlsx', index=None)
 
@@ -154,6 +138,8 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--enddate',    type=datetime.date.fromisoformat, help='Please provide the date in ISO fromat YYYY-MM-DD')
     parser.add_argument(      '--min_posts',  type=int, help='Minimum number of posts per month per keword. default=5', default=5)
     parser.add_argument(      '--max_posts',  type=int, help='Maximum number of posts per month per keword, default=3000', default=3000)
+    parser.add_argument(      '--list_id',    type=int, help='list id from crowdtangle')
+
 
     parser.add_argument(      '--use_declencions',  type=bool, help='Avaliable for ar,az,ka, default=False', default=False)
     parser.add_argument(      '--transliterations_in',  type=str, help='Comma separated list transliterations alphabets. Avaliable transliterations LAT,CYR, default=[]', default='')
@@ -177,5 +163,8 @@ if __name__ == '__main__':
 
     for transliteration_in in kwargs["transliterations_in"]:
         assert transliteration_in in ["LAT", "CYR"]
+    
+    if 'fb' in  kwargs["platforms"]:
+        kwargs["list_id"] = args.list_id
 
     collect(**kwargs)
