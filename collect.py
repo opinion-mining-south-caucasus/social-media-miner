@@ -32,7 +32,7 @@ def get_data_fb(keywords, startdate, enddate):
 
 def get_data_yt(keywords, startdate, enddate):
     TOKEN = os.getenv('YOUTUBE_TOKEN')
-    query = ' OR '.join([f'"{i}"' for i in keywords]):
+    query = ' OR '.join([f'"{i}"' for i in keywords])
 
     params = dict(
         part = 'snippet',
