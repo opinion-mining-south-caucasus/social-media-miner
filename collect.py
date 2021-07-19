@@ -3,7 +3,6 @@
 
 from glob import glob
 from tqdm.notebook import tqdm
-import datetime
 import json
 from os import system
 import argparse
@@ -12,8 +11,7 @@ import pandas as pd
 import langid
 from declensions.declensions import get_declensions
 from transliterations.transliterate import get_transliteration
-from IPython.display import HTML
-import base64
+import datetime
 
 from social_media_minner.tweet_utils import *
 from social_media_minner.crowdtangle_utils import *
@@ -33,9 +31,20 @@ def get_data_fb(keywords, startdate, enddate):
     return df
 
 def get_data_yt(keywords, startdate, enddate):
-    results = []
-    print(keywords, startdate, enddate)
-    return results
+    TOKEN = os.getenv('YOUTUBE_TOKEN')
+    query = ' OR '.join([f'"{i}"' for i in keywords]):
+
+    params = dict(
+        part = 'snippet',
+        q = query,
+        maxResults = 1000,
+        publishedAfter = f'{startdate}T00:00:00Z',
+        key = TOKEN
+    )
+    res = requests.get("https://youtube.googleapis.com/youtube/v3/search", params = params).json()
+    df = pd.DataFrame([i["snippet"] for i in res["items"]])
+
+    return df
 
 def get_data_tl(keywords, startdate, enddate):
     results = []
@@ -55,17 +64,6 @@ platform_functions = {
     'vk': get_data_vk
 }
 
-def create_download_link(df, title, filename):  
-    filename = f"{filename}-{datetime.datetime.now().strftime('%Y-%m-%d-%H-%M')}.csv"
-    csv = df.to_csv()
-    b64 = base64.b64encode(csv.encode())
-    payload = b64.decode()
-    html = '<a download="{filename}" href="data:text/csv;base64,{payload}" target="_blank">{title}</a>'
-    html = html.format(payload=payload,title=title,filename=filename)
-    return HTML(html)
-
-# display(df.head())
-# create_download_link()
 
 def validate_keyword(keyword, platform, min_posts, max_posts):
     """
@@ -157,7 +155,7 @@ if __name__ == '__main__':
         "use_declencions": args.use_declencions,
         "transliterations_in": [i.strip() for i in args.transliterations_in.split(',') if i.strip() != '']
     }
-    print(kwargs)
+    # print(kwargs)
     for platform in kwargs["platforms"]:
         assert platform in ["tw","yt","fb","tl","vk"]
 
