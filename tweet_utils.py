@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 from googletrans import Translator
 import itertools
 import json
+import time
 
 def parseOperators(df):
     
@@ -461,8 +462,10 @@ def get_query_results_tw(queries, startdate, enddate):
                                         user_fields='created_at,description,entities,id,location,name,pinned_tweet_id,profile_image_url,protected,public_metrics,url,username,verified,withheld',
                                         start_time=startdate.isoformat()[:10], 
                                         end_time=enddate.isoformat()[:10])
+        
         i = 0
         while True:
+            time.sleep(8)    
             i += 1
             if i > 50:
                 print('more that 50 pages have been collected for query :', query_)
