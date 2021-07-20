@@ -66,7 +66,7 @@ def get_video_details(ids):
     for i, row in df.iterrows():
         for col in ['snippet', 'contentDetails', 'status', 'statistics', 'topicDetails']:
             if col not in row: continue
-            
+            if type(row[col]) != dict: continue
             for key in row[col]:
                 if type(row[col][key]) == dict:
                     continue

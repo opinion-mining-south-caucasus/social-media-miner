@@ -104,14 +104,14 @@ def collect(**kwargs):
     dfs = {}
     for platform in platforms:
         print(f'collecting data from - {platform}...')
-        try:
-            if platform == 'fb':
-                dfs[platform] = platform_functions[platform](keywords, startdate, enddate, kwargs["list_id"])
-            else:
-                dfs[platform] = platform_functions[platform](keywords, startdate, enddate)
-        except:
-            print('error ocurred while collectiong data from ' + platform)
-            dfs[platform] = pd.DataFrame()
+        # try:
+        if platform == 'fb':
+            dfs[platform] = platform_functions[platform](keywords, startdate, enddate, kwargs["list_id"])
+        else:
+            dfs[platform] = platform_functions[platform](keywords, startdate, enddate)
+        # except:
+        #     print('error ocurred while collectiong data from ' + platform)
+        #     dfs[platform] = pd.DataFrame()
         
         dfs[platform]["platform"] = platform
         print(f'{dfs[platform].shape[0]} results from {platform}')
