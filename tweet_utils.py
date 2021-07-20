@@ -14,6 +14,7 @@ import collections
 import matplotlib.pyplot as plt
 from googletrans import Translator
 import itertools
+import json
 
 def parseOperators(df):
     
