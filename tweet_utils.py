@@ -482,7 +482,8 @@ def get_query_results_tw(queries, startdate, enddate):
                                 result_stream_args=search_args)
             
             tweets_ = tweets[-1]
-            print(tweets_["meta"], len(tweets_["data"]))
+            if os.environ['VERBOSE'] == 'VERBOSE':
+                print(tweets_["meta"], len(tweets_["data"]))
     
     df = pd.DataFrame(itertools.chain.from_iterable([i["data"] for i in tweets]))
     df["like_count"] =  df.public_metrics.apply(lambda x: x["like_count"])
